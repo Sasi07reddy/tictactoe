@@ -1,0 +1,50 @@
+from tkinter import *
+
+root = Tk()
+root.title("Tic Tac Toe")
+root.geometry("300x350")
+
+player = ["X"]  # using list to make it mutable in nested function
+
+label = Label(root, text="Player X's turn", font="Arial 16")
+label.pack(pady=10)
+
+frame = Frame(root)
+frame.pack()
+
+buttons = []
+
+def check_winner():
+    b = [btn["text"] for btn in buttons]
+    wins = [
+        [0,1,2], [3,4,5], [6,7,8],  # rows
+        [0,3,6], [1,4,7], [2,5,8],  # columns
+        [0,4,8], [2,4,6]            # diagonals
+    ]
+    for i, j, k in wins:
+        if b[i] == b[j] == b[k] and b[i] != "":
+            label.config(text=f"Player {b[i]} wins!")
+            for btn in buttons:
+                btn.config(state=DISABLED)
+            return
+    if all(text != "" for text in b):
+        label.config(text="It's a draw!")
+
+def on_click(event):
+    btn = event.widget
+    if btn["text"] == "":
+        btn["text"] = player[0]
+        check_winner()
+        player[0] = "O" if player[0] == "X" else "X"
+        if label["text"].endswith("turn"):
+            label.config(text=f"Player {player[0]}'s turn")
+
+# Create 3x3 grid of buttons
+for i in range(3):
+    for j in range(3):
+        btn = Button(frame, text="", font="Arial 20", width=5, height=2)
+        btn.grid(row=i, column=j, padx=5, pady=5)
+        btn.bind("<Button-1>", on_click)
+        buttons.append(btn)
+
+root.mainloop()
